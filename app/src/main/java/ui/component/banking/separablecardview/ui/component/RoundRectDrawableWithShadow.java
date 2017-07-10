@@ -1,7 +1,9 @@
 package ui.component.banking.separablecardview.ui.component;
 
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
@@ -12,6 +14,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.Nullable;
 
 import ui.component.banking.separablecardview.R;
 
@@ -19,8 +22,6 @@ import ui.component.banking.separablecardview.R;
  * Created by banking on 16/10/14.
  */
 class RoundRectDrawableWithShadow extends Drawable {
-
-    int cardType = CardViewImpl.TYPE_NO_ROUND;
     // used to calculate content padding
     final static double COS_45 = Math.cos(Math.toRadians(45));
 
@@ -60,6 +61,8 @@ class RoundRectDrawableWithShadow extends Drawable {
     // actual value set by developer
     float mRawShadowSize;
 
+    private ColorStateList mBackground;
+
     private boolean mDirty = true;
 
     private final int mShadowStartColor;
@@ -73,17 +76,13 @@ class RoundRectDrawableWithShadow extends Drawable {
      */
     private boolean mPrintedShadowClipWarning = false;
 
-    Paint mTextYellowPaint = new Paint();
-    Paint mTextBlackPaint = new Paint();
-
-
-    RoundRectDrawableWithShadow(Resources resources, int backgroundColor, float radius,
+    RoundRectDrawableWithShadow(Resources resources, ColorStateList backgroundColor, float radius,
                                 float shadowSize, float maxShadowSize) {
         mShadowStartColor = resources.getColor(R.color.cardview_shadow_start_color);
         mShadowEndColor = resources.getColor(R.color.cardview_shadow_end_color);
         mInsetShadow = resources.getDimensionPixelSize(R.dimen.cardview_compat_inset_shadow);
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
-        mPaint.setColor(backgroundColor);
+        setBackground(backgroundColor);
         mCornerShadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
         mCornerShadowPaint.setStyle(Paint.Style.FILL);
         mCornerRadius = (int) (radius + .5f);
@@ -91,15 +90,13 @@ class RoundRectDrawableWithShadow extends Drawable {
         mEdgeShadowPaint = new Paint(mCornerShadowPaint);
         mEdgeShadowPaint.setAntiAlias(false);
         setShadowSize(shadowSize, maxShadowSize);
-
-        mTextYellowPaint.setColor(resources.getColor(R.color.yellow_bg));
-        mTextBlackPaint.setColor(0xff000000);
     }
 
-
-    public void setCardType(int cardType) {
-        this.cardType = cardType;
+    private void setBackground(ColorStateList color) {
+        mBackground = (color == null) ?  ColorStateList.valueOf(Color.TRANSPARENT) : color;
+        mPaint.setColor(mBackground.getColorForState(getState(), mBackground.getDefaultColor()));
     }
+
     /**
      * Casts the value to an even integer.
      */
@@ -130,8 +127,13 @@ class RoundRectDrawableWithShadow extends Drawable {
     }
 
     void setShadowSize(float shadowSize, float maxShadowSize) {
-        if (shadowSize < 0 || maxShadowSize < 0) {
-            throw new IllegalArgumentException("invalid shadow size");
+        if (shadowSize < 0f) {
+            throw new IllegalArgumentException("Invalid shadow size " + shadowSize +
+                    ". Must be >= 0");
+        }
+        if (maxShadowSize < 0f) {
+            throw new IllegalArgumentException("Invalid max shadow size " + maxShadowSize +
+                    ". Must be >= 0");
         }
         shadowSize = toEven(shadowSize);
         maxShadowSize = toEven(maxShadowSize);
@@ -154,19 +156,8 @@ class RoundRectDrawableWithShadow extends Drawable {
 
     @Override
     public boolean getPadding(Rect padding) {
-
         int vOffset = (int) Math.ceil(calculateVerticalPadding(mRawMaxShadowSize, mCornerRadius,
                 mAddPaddingForCorners));
-//        int topOffSet = 0;
-//        int bottomOffSet = 0;
-//        if (cardType == CardViewEclairMr1.TYPE_ONLY_TOP || cardType == CardViewEclairMr1.TYPE_ALL_ROUND) {
-//            topOffSet = vOffset;
-//        } else {
-//        }
-//        if (cardType == CardViewEclairMr1.TYPE_ONLY_BOTTOM || cardType == CardViewEclairMr1.TYPE_ALL_ROUND) {
-//            bottomOffSet = vOffset;
-//        } else {
-//        }
         int hOffset = (int) Math.ceil(calculateHorizontalPadding(mRawMaxShadowSize, mCornerRadius,
                 mAddPaddingForCorners));
         padding.set(hOffset, vOffset, hOffset, vOffset);
@@ -192,10 +183,25 @@ class RoundRectDrawableWithShadow extends Drawable {
     }
 
     @Override
+    protected boolean onStateChange(int[] stateSet) {
+        final int newColor = mBackground.getColorForState(stateSet, mBackground.getDefaultColor());
+        if (mPaint.getColor() == newColor) {
+            return false;
+        }
+        mPaint.setColor(newColor);
+        mDirty = true;
+        invalidateSelf();
+        return true;
+    }
+
+    @Override
+    public boolean isStateful() {
+        return (mBackground != null && mBackground.isStateful()) || super.isStateful();
+    }
+
+    @Override
     public void setColorFilter(ColorFilter cf) {
         mPaint.setColorFilter(cf);
-        mCornerShadowPaint.setColorFilter(cf);
-        mEdgeShadowPaint.setColorFilter(cf);
     }
 
     @Override
@@ -204,6 +210,10 @@ class RoundRectDrawableWithShadow extends Drawable {
     }
 
     void setCornerRadius(float radius) {
+        if (radius < 0f) {
+            throw new IllegalArgumentException("Invalid radius " + radius +
+                    ". Must be >= 0");
+        }
         radius = (int) (radius + .5f);
         if (mCornerRadius == radius) {
             return;
@@ -213,10 +223,11 @@ class RoundRectDrawableWithShadow extends Drawable {
         invalidateSelf();
     }
 
+    int cardType = CardViewImpl.TYPE_ALL_ROUND;
     @Override
     public void draw(Canvas canvas) {
         if (mDirty) {
-            buildComponents(getBounds(),cardType);
+            buildComponents(getBounds());
             mDirty = false;
         }
         canvas.translate(0, mRawShadowSize / 2);
@@ -234,9 +245,8 @@ class RoundRectDrawableWithShadow extends Drawable {
                 drawNoCornerShadow(canvas);
                 break;
         }
-
         canvas.translate(0, -mRawShadowSize / 2);
-//        sRoundRectHelper.drawRoundRect(canvas, mCardBounds, mCornerRadius, mTextYellowPaint);
+        sRoundRectHelper.drawRoundRect(canvas, mCardBounds, mCornerRadius, mPaint);
     }
 
     private void drawAllShadow(Canvas canvas) {
@@ -428,7 +438,6 @@ class RoundRectDrawableWithShadow extends Drawable {
         canvas.restoreToCount(saved);
     }
 
-
     private void buildShadowCorners() {
         RectF innerBounds = new RectF(-mCornerRadius, -mCornerRadius, mCornerRadius, mCornerRadius);
         RectF outerBounds = new RectF(innerBounds);
@@ -463,21 +472,13 @@ class RoundRectDrawableWithShadow extends Drawable {
         mEdgeShadowPaint.setAntiAlias(false);
     }
 
-    private void buildComponents(Rect bounds, int cardType) {
+    private void buildComponents(Rect bounds) {
         // Card is offset SHADOW_MULTIPLIER * maxShadowSize to account for the shadow shift.
         // We could have different top-bottom offsets to avoid extra gap above but in that case
         // center aligning Views inside the CardView would be problematic.
         final float verticalOffset = mRawMaxShadowSize * SHADOW_MULTIPLIER;
-        float topOffset = bounds.top + verticalOffset;
-        if (cardType == CardViewImpl.TYPE_NO_ROUND || cardType == CardViewImpl.TYPE_ONLY_BOTTOM) {
-            topOffset = bounds.top;
-        }
-        float bottomOffset = bounds.bottom - verticalOffset;
-        if (cardType == CardViewImpl.TYPE_NO_ROUND || cardType == CardViewImpl.TYPE_ONLY_TOP) {
-            bottomOffset = bounds.bottom;
-        }
-        mCardBounds.set(bounds.left + mRawMaxShadowSize, topOffset,
-                bounds.right - mRawMaxShadowSize, bottomOffset);
+        mCardBounds.set(bounds.left + mRawMaxShadowSize, bounds.top + verticalOffset,
+                bounds.right - mRawMaxShadowSize, bounds.bottom - verticalOffset);
         buildShadowCorners();
     }
 
@@ -517,13 +518,16 @@ class RoundRectDrawableWithShadow extends Drawable {
         return content + (mRawMaxShadowSize * SHADOW_MULTIPLIER + mInsetShadow) * 2;
     }
 
-    public void setColor(int color) {
-        mPaint.setColor(color);
+    void setColor(@Nullable ColorStateList color) {
+        setBackground(color);
         invalidateSelf();
+    }
+
+    ColorStateList getColor() {
+        return mBackground;
     }
 
     static interface RoundRectHelper {
         void drawRoundRect(Canvas canvas, RectF bounds, float cornerRadius, Paint paint);
     }
 }
-

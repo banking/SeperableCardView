@@ -26,15 +26,19 @@ public class SampleViewHolder extends RecyclerView.ViewHolder {
     public void showView(ListDataBean data) {
         switch (data.bgType) {
             case ListDataBean.BG_TYPE_ALL_ROUND:
+                setMarginBottom(40);
                 setContainerBg(mContainer, CardViewImpl.TYPE_ALL_ROUND);
                 break;
             case ListDataBean.BG_TYPE_TOP_ROUND:
+                setMarginBottom(0);
                 setContainerBg(mContainer, CardViewImpl.TYPE_ONLY_TOP);
                 break;
             case ListDataBean.BG_TYPE_BOTTOM_ROUND:
+                setMarginBottom(0);
                 setContainerBg(mContainer, CardViewImpl.TYPE_ONLY_BOTTOM);
                 break;
             case ListDataBean.BG_TYPE_NO_ROUND:
+                setMarginBottom(0);
                 setContainerBg(mContainer, CardViewImpl.TYPE_NO_ROUND);
                 break;
         }
@@ -42,7 +46,13 @@ public class SampleViewHolder extends RecyclerView.ViewHolder {
 
     protected void setContainerBg(ViewGroup mContainer ,int cardType) {
         if(mContainer instanceof CardView) {
-            ((CardView) mContainer).setCardType(cardType);
+//            ((CardView) mContainer).setCardType(cardType);
         }
+    }
+
+    private void setMarginBottom(int pxSize) {
+        RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) mContainer.getLayoutParams();
+        params.setMargins(20, 0, 20, pxSize);
+        mContainer.setLayoutParams(params);
     }
 }
