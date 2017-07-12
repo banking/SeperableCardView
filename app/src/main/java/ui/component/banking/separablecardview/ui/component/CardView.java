@@ -74,6 +74,9 @@ public class CardView extends FrameLayout {
 
     public void setCardType(int cardType) {
         mCardType = cardType;
+        if (IMPL instanceof CardViewGingerbread) {
+            ((CardViewJellybeanMr1) IMPL).setCardType(mCardType);
+        }
     }
 
     @Override
@@ -208,9 +211,7 @@ public class CardView extends FrameLayout {
         a.recycle();
         IMPL.initialize(mCardViewDelegate, context, backgroundColor, radius,
                 elevation, maxElevation);
-        if (IMPL instanceof CardViewGingerbread) {
-            ((CardViewJellybeanMr1) IMPL).setCardType(mCardType);
-        }
+
     }
 
     @Override

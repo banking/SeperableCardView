@@ -224,6 +224,10 @@ class RoundRectDrawableWithShadow extends Drawable {
     }
 
     int cardType = CardViewImpl.TYPE_ALL_ROUND;
+
+    public void setCardType(int cardType) {
+        this.cardType = cardType;
+    }
     @Override
     public void draw(Canvas canvas) {
         if (mDirty) {

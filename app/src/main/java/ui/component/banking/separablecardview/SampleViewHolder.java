@@ -46,7 +46,7 @@ public class SampleViewHolder extends RecyclerView.ViewHolder {
 
     protected void setContainerBg(ViewGroup mContainer ,int cardType) {
         if(mContainer instanceof CardView) {
-//            ((CardView) mContainer).setCardType(cardType);
+            ((CardView) mContainer).setCardType(cardType);
         }
     }
 
