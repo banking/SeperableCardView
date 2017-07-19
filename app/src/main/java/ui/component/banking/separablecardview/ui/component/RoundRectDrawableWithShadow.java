@@ -343,7 +343,7 @@ class RoundRectDrawableWithShadow extends Drawable {
         }
         canvas.restoreToCount(saved);
 
-        // RB
+        // RB  //todo check wrong Shadow
         saved = canvas.save();
         canvas.translate(mCardBounds.right - inset, mCardBounds.bottom - inset);
         canvas.rotate(180f);
@@ -361,33 +361,18 @@ class RoundRectDrawableWithShadow extends Drawable {
         final float inset = mCornerRadius + mInsetShadow + mRawShadowSize / 2;
         final boolean drawHorizontalEdges = mCardBounds.width() - 2 * inset > 0;
         final boolean drawVerticalEdges = mCardBounds.height() - 2 * inset > 0;
-        // LT
-        int saved = canvas.save();
-        canvas.translate(mCardBounds.left + inset, mCardBounds.top + inset);
-        if (drawHorizontalEdges) {
-            canvas.drawRect(-2 * inset, edgeShadowTop - 1.0f,
-                    mCardBounds.width() - inset, -mCornerRadius,
-                    mPaint);
-        }
-        canvas.restoreToCount(saved);
-        // RB
-        saved = canvas.save();
-        canvas.translate(mCardBounds.right - inset, mCardBounds.bottom - inset);
-        canvas.rotate(180f);
-        if (drawHorizontalEdges) {
-            canvas.drawRect(-inset, edgeShadowTop,//- mInsetShadow
-                    mCardBounds.width() - inset, -mCornerRadius + mShadowSize,
-                    mPaint);
-        }
-        canvas.restoreToCount(saved);
+
+
 
         // LB
-        saved = canvas.save();
+        int saved = canvas.save();
         canvas.translate(mCardBounds.left + inset, mCardBounds.bottom - inset);
         canvas.rotate(270f);
-        if (drawVerticalEdges) {
-            canvas.drawRect(-inset, edgeShadowTop, //mCornerRadius
-                    mCardBounds.height() - inset, -mCornerRadius, mEdgeShadowPaint);
+        if (drawVerticalEdges) { // 划线方向和预想不一致
+//            canvas.drawRect(inset, edgeShadowTop,
+//                    mCardBounds.height() + 2 * mCornerRadius , -mCornerRadius, mEdgeShadowPaint);
+            canvas.drawRect(- mCornerRadius - 2 * inset, edgeShadowTop - mCornerRadius - mInsetShadow,
+                    mCardBounds.height() - mCornerRadius, -mCornerRadius, mEdgeShadowPaint);
         }
         canvas.restoreToCount(saved);
         // RT
@@ -395,8 +380,31 @@ class RoundRectDrawableWithShadow extends Drawable {
         canvas.translate(mCardBounds.right - inset, mCardBounds.top + inset);
         canvas.rotate(90f);
         if (drawVerticalEdges) {
-            canvas.drawRect(-inset, edgeShadowTop,
-                    mCardBounds.height(), -mCornerRadius, mEdgeShadowPaint);
+//            canvas.drawRect(-inset, edgeShadowTop,
+//                    mCardBounds.height(), -mCornerRadius, mEdgeShadowPaint);
+            canvas.drawRect(-mCornerRadius - inset , edgeShadowTop,
+                    mCardBounds.height() - inset + mCornerRadius , -mCornerRadius, mEdgeShadowPaint);
+        }
+        canvas.restoreToCount(saved);
+
+        // LT
+        saved = canvas.save();
+        canvas.translate(mCardBounds.left + inset, mCardBounds.top + inset);
+        if (drawHorizontalEdges) {
+            canvas.drawRect(-mShadowSize, edgeShadowTop - 1.0f,
+                    mCardBounds.width() - mShadowSize, -mCornerRadius,
+                    mPaint);
+        }
+        canvas.restoreToCount(saved);
+
+        // RB
+        saved = canvas.save();
+        canvas.translate(mCardBounds.right - inset, mCardBounds.bottom - inset);
+        canvas.rotate(180f);
+        if (drawHorizontalEdges) {
+            canvas.drawRect(-mShadowSize , edgeShadowTop,
+                    mCardBounds.width()-mShadowSize , -mCornerRadius + mShadowSize,
+                    mPaint);
         }
         canvas.restoreToCount(saved);
     }
