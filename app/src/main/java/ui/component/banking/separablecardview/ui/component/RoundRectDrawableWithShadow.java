@@ -15,6 +15,7 @@ import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import ui.component.banking.separablecardview.R;
 
@@ -258,6 +259,10 @@ class RoundRectDrawableWithShadow extends Drawable {
         final float inset = mCornerRadius + mInsetShadow + mRawShadowSize / 2;
         final boolean drawHorizontalEdges = mCardBounds.width() - 2 * inset > 0;
         final boolean drawVerticalEdges = mCardBounds.height() - 2 * inset > 0;
+        Log.d("", "Shadow Config log:mCornerRadius = " + mCornerRadius + ";mCornerRadius = " + mShadowSize
+            + ";mInsetShadow = " + mInsetShadow + ";mCardBounds.width = " + mCardBounds.width() +
+                ";mCardBuonds.height = " + mCardBounds.height() + ";mCardBounds.left = " + mCardBounds.left
+                + ";mCardBounds.top = " + mCardBounds.top);
         // LT
         int saved = canvas.save();
         canvas.translate(mCardBounds.left + inset, mCardBounds.top + inset);
@@ -316,35 +321,37 @@ class RoundRectDrawableWithShadow extends Drawable {
                     mEdgeShadowPaint);
         }
         canvas.restoreToCount(saved);
-        // RB
-        saved = canvas.save();
-        canvas.translate(mCardBounds.right - inset, mCardBounds.bottom - inset);
-        canvas.rotate(180f);
-//        canvas.drawPath(mCornerShadowPath, mCornerShadowPaint);
-        if (drawHorizontalEdges) {
-            canvas.drawRect(-mRawShadowSize-mInsetShadow, edgeShadowTop,
-                    mCardBounds.width() - inset, -mCornerRadius + mShadowSize,
-                    mPaint);
-        }
-        canvas.restoreToCount(saved);
+
         // LB //must fix draw path
         saved = canvas.save();
         canvas.translate(mCardBounds.left + inset, mCardBounds.bottom - inset);
         canvas.rotate(270f);
 //        canvas.drawPath(mCornerShadowPath, mCornerShadowPaint);
         if (drawVerticalEdges) {
-            canvas.drawRect(-mRawShadowSize, edgeShadowTop - mCornerRadius - mInsetShadow,
+            canvas.drawRect(-mCornerRadius - 2 * inset, edgeShadowTop - mCornerRadius - mInsetShadow,
                     mCardBounds.height() - 2 * inset , -mCornerRadius, mEdgeShadowPaint);
         }
         canvas.restoreToCount(saved);
-        // RT //todo
+        // RT
         saved = canvas.save();
         canvas.translate(mCardBounds.right - inset, mCardBounds.top + inset);
         canvas.rotate(90f);
         canvas.drawPath(mCornerShadowPath, mCornerShadowPaint);
         if (drawVerticalEdges) {
             canvas.drawRect(0, edgeShadowTop,
-                    mCardBounds.height() - 2 * inset + mCornerRadius , -mCornerRadius, mEdgeShadowPaint);
+                    mCardBounds.height() - inset + mCornerRadius , -mCornerRadius, mEdgeShadowPaint);
+        }
+        canvas.restoreToCount(saved);
+
+        // RB
+        saved = canvas.save();
+        canvas.translate(mCardBounds.right - inset, mCardBounds.bottom - inset);
+        canvas.rotate(180f);
+//        canvas.drawPath(mCornerShadowPath, mCornerShadowPaint);
+        if (drawHorizontalEdges) {
+            canvas.drawRect(-mShadowSize , edgeShadowTop,
+                    mCardBounds.width() - mShadowSize , -mCornerRadius + mShadowSize,
+                    mPaint);
         }
         canvas.restoreToCount(saved);
     }
@@ -481,6 +488,7 @@ class RoundRectDrawableWithShadow extends Drawable {
         // We could have different top-bottom offsets to avoid extra gap above but in that case
         // center aligning Views inside the CardView would be problematic.
         final float verticalOffset = mRawMaxShadowSize * SHADOW_MULTIPLIER;
+        Log.i("", "Shadow Config log buonds -->" + bounds.left + ";" + bounds.top);
         mCardBounds.set(bounds.left + mRawMaxShadowSize, bounds.top + verticalOffset,
                 bounds.right - mRawMaxShadowSize, bounds.bottom - verticalOffset);
         buildShadowCorners();
