@@ -40,7 +40,9 @@ class RoundRectDrawableWithShadow extends Drawable {
 
     Paint mPaint;
 
-    Paint mTestPaint;
+    Paint mTestYellowPaint;
+
+    Paint mTestBlackPaint;
 
     Paint mCornerShadowPaint;
 
@@ -87,7 +89,8 @@ class RoundRectDrawableWithShadow extends Drawable {
         mShadowEndColor = resources.getColor(R.color.cardview_shadow_end_color);
         mInsetShadow = resources.getDimensionPixelSize(R.dimen.cardview_compat_inset_shadow);
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
-        mTestPaint = new Paint();
+        mTestYellowPaint = new Paint();
+        mTestBlackPaint = new Paint();
         setBackground(backgroundColor);
         mCornerShadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG | Paint.DITHER_FLAG);
         mCornerShadowPaint.setStyle(Paint.Style.FILL);
@@ -103,7 +106,8 @@ class RoundRectDrawableWithShadow extends Drawable {
     private void setBackground(ColorStateList color) {
         mBackground = (color == null) ?  ColorStateList.valueOf(Color.TRANSPARENT) : color;
         mPaint.setColor(mBackground.getColorForState(getState(), mBackground.getDefaultColor()));
-        mTestPaint.setColor(Color.parseColor("#ffff00"));
+        mTestYellowPaint.setColor(Color.parseColor("#ffff00"));
+        mTestBlackPaint.setColor(Color.parseColor("#000000"));
     }
 
     /**
@@ -372,7 +376,8 @@ class RoundRectDrawableWithShadow extends Drawable {
 
     private void drawNoCornerShadow(Canvas canvas) {
         final float edgeShadowTop = -mCornerRadius - mShadowSize;
-        final float inset = mCornerRadius + mInsetShadow + mRawShadowSize / 2;
+        final float inset = mCornerRadius + mInsetShadow + mRawShadowSize/2;
+        final float insetRaw = mCornerRadius + mInsetShadow + mRawShadowSize/2;
         final boolean drawHorizontalEdges = mCardBounds.width() - 2 * inset > 0;
         final boolean drawVerticalEdges = mCardBounds.height() - 2 * inset > 0;
 
@@ -380,15 +385,17 @@ class RoundRectDrawableWithShadow extends Drawable {
 
         // LB
         int saved = canvas.save();
-        canvas.translate(mCardBounds.left + inset, mCardBounds.bottom - inset);
+        canvas.translate(mCardBounds.left + insetRaw, mCardBounds.bottom - insetRaw);
         canvas.rotate(270f);
-        if (drawVerticalEdges) { // 划线方向和预想不一致
-//            canvas.drawRect(inset, edgeShadowTop,
-//                    mCardBounds.height() + 2 * mCornerRadius , -mCornerRadius, mEdgeShadowPaint);
+        if (drawVerticalEdges) { // 划线方向和预想不一致，done
             canvas.drawRect(- mCornerRadius - 2 * inset, edgeShadowTop - mCornerRadius - mInsetShadow,
-                    mCardBounds.height() - mCornerRadius, -mCornerRadius, mEdgeShadowPaint2);
+                    mCardBounds.height() + mCornerRadius, -mCornerRadius, mEdgeShadowPaint);
         }
         canvas.restoreToCount(saved);
+
+//        canvas.drawRect(0, 0,
+//                mCornerRadius, mCardBounds.height() + mCornerRadius, mTestYellowPaint);
+
         // RT
         saved = canvas.save();
         canvas.translate(mCardBounds.right - inset, mCardBounds.top + inset);
@@ -396,8 +403,8 @@ class RoundRectDrawableWithShadow extends Drawable {
         if (drawVerticalEdges) {
 //            canvas.drawRect(-inset, edgeShadowTop,
 //                    mCardBounds.height(), -mCornerRadius, mEdgeShadowPaint);
-            canvas.drawRect(-mCornerRadius - inset , edgeShadowTop,
-                    mCardBounds.height() - inset + mCornerRadius , -mCornerRadius, mEdgeShadowPaint2);
+            canvas.drawRect(-mCornerRadius - 2 * inset , edgeShadowTop,
+                    mCardBounds.height() + mCornerRadius , -mCornerRadius, mEdgeShadowPaint);
         }
         canvas.restoreToCount(saved);
 
@@ -414,7 +421,7 @@ class RoundRectDrawableWithShadow extends Drawable {
         if (drawHorizontalEdges) {
             canvas.drawRect(mCornerRadius, 0,
                     mCardBounds.width() + mCornerRadius, mShadowSize,
-                    mPaint);
+                    mTestYellowPaint);
         }
 
 //        // RB
@@ -431,8 +438,11 @@ class RoundRectDrawableWithShadow extends Drawable {
         if (drawHorizontalEdges) { //todo card radius
             canvas.drawRect(mCornerRadius, mCardBounds.height(), // todo why not + mShadowSize
                     mCardBounds.width() + mCornerRadius, mShadowSize + mCardBounds.height() + mShadowSize,
-                    mTestPaint);
+                    mPaint);
         }
+
+//        canvas.drawRect(mCardBounds.left + insetRaw - 10, mCardBounds.bottom - insetRaw - 10 ,
+//                mCardBounds.left + insetRaw + 10, mCardBounds.bottom - insetRaw + 10 ,mTestBlackPaint);
     }
 
     private void drawShadowOnlyBottom(Canvas canvas){

@@ -26,8 +26,6 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new SampleAdapter();
         mAdapter.setDataList(mockData());
         mRecycleView.setAdapter(mAdapter);
-        int i = 10;
-        Log.i("", "onCreate function");
     }
 
     public List<ListDataBean> mockData() {
@@ -40,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
             listDataBean.endAddress = "到达";
             dataBeanList.add(listDataBean);
         }
+
+        ListDataBean listDataBean = new ListDataBean();
+        listDataBean.bgType = 2;
+        dataBeanList.add(2, listDataBean);
+
         return dataBeanList;
     }
 
