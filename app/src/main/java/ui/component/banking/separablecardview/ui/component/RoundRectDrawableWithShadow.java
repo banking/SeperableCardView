@@ -451,8 +451,8 @@ class RoundRectDrawableWithShadow extends Drawable {
         canvas.rotate(270f);
         canvas.drawPath(mCornerShadowPath, mCornerShadowPaint);
         if (drawVerticalEdges) {
-            canvas.drawRect(- mCornerRadius , edgeShadowTop - mCornerRadius - mInsetShadow,
-                    mCardBounds.height() + mCornerRadius, -mCornerRadius, mEdgeShadowPaint);
+            canvas.drawRect(0, edgeShadowTop,
+                    mCardBounds.height(), -mCornerRadius, mEdgeShadowPaint);
         }
         canvas.restoreToCount(saved);
         // RT
