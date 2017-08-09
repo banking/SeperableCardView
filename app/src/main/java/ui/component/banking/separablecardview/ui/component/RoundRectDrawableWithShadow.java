@@ -431,21 +431,15 @@ class RoundRectDrawableWithShadow extends Drawable {
         final boolean drawHorizontalEdges = mCardBounds.width() - 2 * inset > 0;
         final boolean drawVerticalEdges = mCardBounds.height() - 2 * inset > 0;
 
-        // LT
-        int saved = canvas.save();
-        canvas.translate(mCardBounds.left + inset, mCardBounds.top + inset);
-        if (drawHorizontalEdges) {
-            canvas.drawRect(-2 * inset, edgeShadowTop - 10.0f,  //todo check
-                    mCardBounds.width() - inset, -mCornerRadius,
-                    mPaint);
-        }
-        canvas.restoreToCount(saved);
+
+
+
         // RB
-        saved = canvas.save();
+        int saved = canvas.save();
         canvas.translate(mCardBounds.right - inset, mCardBounds.bottom - inset);
         canvas.rotate(180f);
         canvas.drawPath(mCornerShadowPath, mCornerShadowPaint);
-        if (drawHorizontalEdges) {
+        if (drawHorizontalEdges) {  //todo check
             canvas.drawRect(0, edgeShadowTop,
                     mCardBounds.width() - 2 * inset, -mCornerRadius + mShadowSize,
                     mEdgeShadowPaint);
@@ -457,10 +451,8 @@ class RoundRectDrawableWithShadow extends Drawable {
         canvas.rotate(270f);
         canvas.drawPath(mCornerShadowPath, mCornerShadowPaint);
         if (drawVerticalEdges) {
-//            canvas.drawRect(0, edgeShadowTop,
-//                    mCardBounds.height() -  inset , -mCornerRadius, mEdgeShadowPaint);
-            canvas.drawRect(- mCornerRadius, edgeShadowTop - mCornerRadius - mInsetShadow,
-                    mCardBounds.height() - mCornerRadius, -mCornerRadius, mEdgeShadowPaint);
+            canvas.drawRect(- mCornerRadius , edgeShadowTop - mCornerRadius - mInsetShadow,
+                    mCardBounds.height() + mCornerRadius, -mCornerRadius, mEdgeShadowPaint);
         }
         canvas.restoreToCount(saved);
         // RT
@@ -468,10 +460,17 @@ class RoundRectDrawableWithShadow extends Drawable {
         canvas.translate(mCardBounds.right - inset, mCardBounds.top + inset);
         canvas.rotate(90f);
         if (drawVerticalEdges) {
-            canvas.drawRect(-inset, edgeShadowTop,
+            canvas.drawRect(-2 * inset, edgeShadowTop,
                     mCardBounds.height()- 2 * inset, -mCornerRadius, mEdgeShadowPaint);
         }
         canvas.restoreToCount(saved);
+
+        // LT
+        if (drawHorizontalEdges) {
+            canvas.drawRect(mCornerRadius, -mRawShadowSize / 2,
+                    mCardBounds.width() + mCornerRadius, mShadowSize,
+                    mPaint);
+        }
     }
 
     private void buildShadowCorners() {
