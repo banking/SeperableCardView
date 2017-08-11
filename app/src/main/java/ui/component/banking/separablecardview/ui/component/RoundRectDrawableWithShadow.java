@@ -431,15 +431,12 @@ class RoundRectDrawableWithShadow extends Drawable {
         final boolean drawHorizontalEdges = mCardBounds.width() - 2 * inset > 0;
         final boolean drawVerticalEdges = mCardBounds.height() - 2 * inset > 0;
 
-
-
-
         // RB
         int saved = canvas.save();
         canvas.translate(mCardBounds.right - inset, mCardBounds.bottom - inset);
         canvas.rotate(180f);
         canvas.drawPath(mCornerShadowPath, mCornerShadowPaint);
-        if (drawHorizontalEdges) {  //todo check
+        if (drawHorizontalEdges) {
             canvas.drawRect(0, edgeShadowTop,
                     mCardBounds.width() - 2 * inset, -mCornerRadius + mShadowSize,
                     mEdgeShadowPaint);
