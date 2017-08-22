@@ -16,7 +16,7 @@ public class CardViewGingerbread implements CardViewImpl {
     final RectF sCornerRect = new RectF();
 
     @Override
-    public void initStatic()  {
+    public void initStatic()  { //step6
         // Draws a round rect using 7 draw operations. This is faster than using
         // canvas.drawRoundRect before JBMR1 because API 11-16 used alpha mask textures to draw
         // shapes.
