@@ -6,7 +6,6 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -24,15 +23,16 @@ public class CardView extends FrameLayout {
     private static final CardViewImpl IMPL;
 
     static {
+        IMPL = new CardViewJellybeanMr1();
 //        IMPL = new CardViewApi21();
-        if (Build.VERSION.SDK_INT >= 21) {
-//            IMPL = new CardViewGingerbread();
-            IMPL = new CardViewJellybeanMr1();
-//            IMPL = new CardViewApi21();
-        } else { // (Build.VERSION.SDK_INT >= 17)
-//            IMPL = new CardViewGingerbread();
-            IMPL = new CardViewJellybeanMr1(); //this case
-        }
+//        if (Build.VERSION.SDK_INT >= 21) {
+////            IMPL = new CardViewGingerbread();
+//            IMPL = new CardViewJellybeanMr1();
+////            IMPL = new CardViewApi21();
+//        } else { // (Build.VERSION.SDK_INT >= 17)
+////            IMPL = new CardViewGingerbread();
+//             //this case
+//        }
 //        else {
 ////            IMPL = new CardViewGingerbread();
 //        }
