@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,11 +37,9 @@ public class MainActivity extends AppCompatActivity {
             listDataBean.endAddress = "到达";
             dataBeanList.add(listDataBean);
         }
-
         ListDataBean listDataBean = new ListDataBean();
         listDataBean.bgType = 2;
         dataBeanList.add(2, listDataBean);
-
         return dataBeanList;
     }
 

@@ -24,18 +24,6 @@ public class CardView extends FrameLayout {
 
     static {
         IMPL = new CardViewJellybeanMr1();
-//        IMPL = new CardViewApi21();
-//        if (Build.VERSION.SDK_INT >= 21) {
-////            IMPL = new CardViewGingerbread();
-//            IMPL = new CardViewJellybeanMr1();
-////            IMPL = new CardViewApi21();
-//        } else { // (Build.VERSION.SDK_INT >= 17)
-////            IMPL = new CardViewGingerbread();
-//             //this case
-//        }
-//        else {
-////            IMPL = new CardViewGingerbread();
-//        }
         IMPL.initStatic();
     }
 
@@ -144,30 +132,26 @@ public class CardView extends FrameLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (!(IMPL instanceof CardViewApi21)) {
-            final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-            switch (widthMode) {
-                case MeasureSpec.EXACTLY:
-                case MeasureSpec.AT_MOST:
-                    final int minWidth = (int) Math.ceil(IMPL.getMinWidth(mCardViewDelegate));
-                    widthMeasureSpec = MeasureSpec.makeMeasureSpec(Math.max(minWidth,
-                            MeasureSpec.getSize(widthMeasureSpec)), widthMode);
-                    break;
-            }
-
-            final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-            switch (heightMode) {
-                case MeasureSpec.EXACTLY:
-                case MeasureSpec.AT_MOST:
-                    final int minHeight = (int) Math.ceil(IMPL.getMinHeight(mCardViewDelegate));
-                    heightMeasureSpec = MeasureSpec.makeMeasureSpec(Math.max(minHeight,
-                            MeasureSpec.getSize(heightMeasureSpec)), heightMode);
-                    break;
-            }
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        } else {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        switch (widthMode) {
+            case MeasureSpec.EXACTLY:
+            case MeasureSpec.AT_MOST:
+                final int minWidth = (int) Math.ceil(IMPL.getMinWidth(mCardViewDelegate));
+                widthMeasureSpec = MeasureSpec.makeMeasureSpec(Math.max(minWidth,
+                        MeasureSpec.getSize(widthMeasureSpec)), widthMode);
+                break;
         }
+
+        final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        switch (heightMode) {
+            case MeasureSpec.EXACTLY:
+            case MeasureSpec.AT_MOST:
+                final int minHeight = (int) Math.ceil(IMPL.getMinHeight(mCardViewDelegate));
+                heightMeasureSpec = MeasureSpec.makeMeasureSpec(Math.max(minHeight,
+                        MeasureSpec.getSize(heightMeasureSpec)), heightMode);
+                break;
+        }
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     private void initialize(Context context, AttributeSet attrs, int defStyleAttr) {

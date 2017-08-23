@@ -268,7 +268,7 @@ class RoundRectDrawableWithShadow extends Drawable {
         }
         if (cardType != CardViewImpl.TYPE_NO_ROUND) {
             /**
-             * 恢复canvas的translate，因为下面马上要画RectBorder了
+             * 恢复canvas的translate，因为下面马上要画RoundRect了
              */
             canvas.translate(0, -mRawShadowSize / 2);
         }
@@ -280,11 +280,11 @@ class RoundRectDrawableWithShadow extends Drawable {
         final float inset = mCornerRadius + mInsetShadow + mRawShadowSize/2;
         final boolean drawHorizontalEdges = mCardBounds.width() - 2 * inset > 0;
         final boolean drawVerticalEdges = mCardBounds.height() - 2 * inset > 0;
-        Log.i("", "Shadow Config log:mCornerRadius = " + mCornerRadius + ";mCornerRadius = " + mShadowSize
-            + ";mInsetShadow = " + mInsetShadow + ";mCardBounds.width = " + mCardBounds.width() +
-                ";mCardBuonds.height = " + mCardBounds.height() + ";mCardBounds.left = " + mCardBounds.left
-                + ";mCardBounds.top = " + mCardBounds.top);
-        Log.i("", "Shadow Config log Busi: mRawShadowSize = " + mRawShadowSize);
+//        Log.i("", "Shadow Config log:mCornerRadius = " + mCornerRadius + ";mCornerRadius = " + mShadowSize
+//            + ";mInsetShadow = " + mInsetShadow + ";mCardBounds.width = " + mCardBounds.width() +
+//                ";mCardBuonds.height = " + mCardBounds.height() + ";mCardBounds.left = " + mCardBounds.left
+//                + ";mCardBounds.top = " + mCardBounds.top);
+//        Log.i("", "Shadow Config log Busi: mRawShadowSize = " + mRawShadowSize);
         // LT
         int saved = canvas.save();
         canvas.translate(mCardBounds.left + inset, mCardBounds.top + inset);
@@ -330,7 +330,7 @@ class RoundRectDrawableWithShadow extends Drawable {
         canvas.restoreToCount(saved);
     }
 
-    private void drawShadowOnlyTop(Canvas canvas) { //checked step4
+    private void drawShadowOnlyTop(Canvas canvas) {
         //final float verticalOffset = mRawMaxShadowSize * SHADOW_MULTIPLIER;
 //        mCardBounds.set(bounds.left + mRawMaxShadowSize, bounds.top + verticalOffset,
 //                bounds.right - mRawMaxShadowSize, bounds.bottom - verticalOffset);
@@ -440,7 +440,7 @@ class RoundRectDrawableWithShadow extends Drawable {
 
     }
 
-    private void drawShadowOnlyBottom(Canvas canvas){ //step5
+    private void drawShadowOnlyBottom(Canvas canvas){
 
         final float inset = mCornerRadius + mInsetShadow + mRawShadowSize / 2;
         final float edgeShadowTop = -mCornerRadius - mShadowSize;
@@ -505,23 +505,7 @@ class RoundRectDrawableWithShadow extends Drawable {
         }
         canvas.restoreToCount(saved);
 
-        //LT
-//        saved = canvas.save();
-//        canvas.translate(mCardBounds.left + inset, mCardBounds.top + inset);
-//        if (drawHorizontalEdges) {
-////            canvas.drawRect(0, edgeShadowTop,
-////                    mCardBounds.width() - 2 * inset, -mCornerRadius,
-////                    mEdgeShadowPaint);
-////            canvas.drawRect(-inset, edgeShadowTop ,
-////                    mCardBounds.width() - 2 * inset + inset, -mCornerRadius ,
-////                    mPaint);
-//            canvas.drawRect(-inset, - mCardBounds.top - inset -mRawShadowSize / 2,
-//                    mCardBounds.width() - inset, -inset,
-//                    mPaint);
-//        }
-//        canvas.restoreToCount(saved);
-
-        // LT this is the eazily way
+        // LT this is the another way,none translate
 //        if (drawHorizontalEdges) { //mCardBounds.width() + inset
 //            canvas.drawRect(mCardBounds.left, -mRawShadowSize / 2,
 //                    mCardBounds.right, mShadowSize - mRawShadowSize / 2,
@@ -529,7 +513,7 @@ class RoundRectDrawableWithShadow extends Drawable {
 //        }
     }
 
-    private void buildShadowCorners() { //step2
+    private void buildShadowCorners() {
         RectF innerBounds = new RectF(-mCornerRadius, -mCornerRadius, mCornerRadius, mCornerRadius);
         RectF outerBounds = new RectF(innerBounds);
         outerBounds.inset(-mShadowSize, -mShadowSize);
